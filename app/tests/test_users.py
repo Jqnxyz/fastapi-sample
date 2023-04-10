@@ -3,64 +3,37 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.main import app
-from app.models import User
-from app.tests.conftest import (
-    default_user_email,
-    default_user_id,
-    default_user_password_hash,
-)
+from app.models import Prompt
+
+import openai
 
 
-async def test_read_current_user(client: AsyncClient, default_user_headers):
-    response = await client.get(
-        app.url_path_for("read_current_user"), headers=default_user_headers
-    )
-    assert response.status_code == 200
-    assert response.json() == {
-        "id": default_user_id,
-        "email": default_user_email,
-    }
-
-
-async def test_delete_current_user(
-    client: AsyncClient, default_user_headers, session: AsyncSession
+async def test_create_prompt(
+    client: AsyncClient, session: AsyncSession, monkeypatch
 ):
-    response = await client.delete(
-        app.url_path_for("delete_current_user"), headers=default_user_headers
-    )
-    assert response.status_code == 204
-    result = await session.execute(select(User).where(User.id == default_user_id))
-    user = result.scalars().first()
-    assert user is None
+    def mock_completion_create(*args, **kwargs):
+        return {
+            'choices': [{
+                'message': {
+                    'role': 'assistant',
+                    'content': 'Hello Test'},
+                'finish_reason': 'stop',
+                'index': 0
+            }]
+        }
 
+    monkeypatch.setattr(openai.ChatCompletion, "create",
+                        mock_completion_create)
 
-async def test_reset_current_user_password(
-    client: AsyncClient, default_user_headers, session: AsyncSession
-):
+    expected_query = "This is a prompt query."
     response = await client.post(
-        app.url_path_for("reset_current_user_password"),
-        headers=default_user_headers,
-        json={"password": "testxxxxxx"},
-    )
-    assert response.status_code == 200
-    result = await session.execute(select(User).where(User.id == default_user_id))
-    user = result.scalars().first()
-    assert user is not None
-    assert user.hashed_password != default_user_password_hash
-
-
-async def test_register_new_user(
-    client: AsyncClient, default_user_headers, session: AsyncSession
-):
-    response = await client.post(
-        app.url_path_for("register_new_user"),
-        headers=default_user_headers,
+        app.url_path_for("create_prompt"),
         json={
-            "email": "qwe@example.com",
-            "password": "asdasdasd",
+            "query": expected_query
         },
     )
     assert response.status_code == 200
-    result = await session.execute(select(User).where(User.email == "qwe@example.com"))
-    user = result.scalars().first()
-    assert user is not None
+    result = await session.execute(select(Prompt).where(Prompt.query == expected_query))
+    prompt = result.scalars().first()
+    assert prompt is not None
+    assert prompt.response == "Hello Test"

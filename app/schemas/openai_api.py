@@ -6,5 +6,6 @@ class BaseRequest(BaseModel):
     pass
 
 
-class PromptCreateRequest(BaseModel):
+class GptResponse(BaseModel):
     query: str
+    response: str

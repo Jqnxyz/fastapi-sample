@@ -33,12 +33,14 @@ with open(f"{PROJECT_DIR}/pyproject.toml", "rb") as f:
 
 
 class Settings(BaseSettings):
+    # MALCOLM
+    DATABASE_URL: str
+    OPENAI_ORG: str
+    OPENAI_API_KEY: str
+
     # CORE SETTINGS
     SECRET_KEY: str
     ENVIRONMENT: Literal["DEV", "PYTEST", "STG", "PRD"] = "DEV"
-    SECURITY_BCRYPT_ROUNDS: int = 12
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days
-    REFRESH_TOKEN_EXPIRE_MINUTES: int = 40320  # 28 days
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
     ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1"]
 
@@ -62,10 +64,6 @@ class Settings(BaseSettings):
     TEST_DATABASE_PORT: str = "5432"
     TEST_DATABASE_DB: str = "postgres"
     TEST_SQLALCHEMY_DATABASE_URI: str = ""
-
-    # FIRST SUPERUSER
-    FIRST_SUPERUSER_EMAIL: EmailStr
-    FIRST_SUPERUSER_PASSWORD: str
 
     @validator("DEFAULT_SQLALCHEMY_DATABASE_URI")
     def _assemble_default_db_connection(cls, v: str, values: dict[str, str]) -> str:
