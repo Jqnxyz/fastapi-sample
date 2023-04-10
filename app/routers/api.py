@@ -1,15 +1,11 @@
-from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import APIRouter
+from ..schemas.api import Prompt
+from ..api import openai as OpenAI
 from fastapi.encoders import jsonable_encoder
-import api.openai as OpenAI
-app = FastAPI()
+router = APIRouter()
 
 
-class Prompt(BaseModel):
-    query: str
-
-
-@app.post("/prompt")
+@router.post("/prompt")
 async def root(prompt: Prompt):
     response = OpenAI.gpt_prompt(prompt.query)
     print(response)
