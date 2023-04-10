@@ -1,24 +1,31 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-slim-bullseye
+FROM python:3.11.1-slim-bullseye
 
-# Set the working directory to /app
-WORKDIR /app
+ENV PYTHONUNBUFFERED 1
+WORKDIR /build
 
-# Copy the requirements file into the container at /app
+# Create venv, add it to path and install requirements
+RUN python -m venv /venv
+ENV PATH="/venv/bin:$PATH"
+
 COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Install any needed packages specified in requirements.txt
-# RUN apt-get update \
-#     && apt-get -y install libpq-dev gcc 
-# RUN python3 -m pip install -r requirements.txt --no-cache-dir 
+# Install uvicorn server
+RUN pip install uvicorn[standard]
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy the rest of app
+COPY app app
+COPY alembic alembic
+COPY alembic.ini .
+COPY pyproject.toml .
+COPY init.sh .
 
-# Copy the rest of the application code into the container at /app
-COPY . .
+# Create new user to run app process as unprivilaged user
+RUN addgroup --gid 1001 --system uvicorn && \
+    adduser --gid 1001 --shell /bin/false --disabled-password --uid 1001 uvicorn
 
-# Expose port 8000 for the FastAPI server
+# Run init.sh script then start uvicorn
+RUN chown -R uvicorn:uvicorn /build
+CMD bash init.sh && \
+    runuser -u uvicorn -- /venv/bin/uvicorn app.main:app --app-dir /build --host 0.0.0.0 --port 8000 --workers 2 --loop uvloop
 EXPOSE 8000
-
-# Start the FastAPI server when the container launches
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
