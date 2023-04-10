@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from ..models import prompts as promptModel
+from .. import models as promptModel
 from ..schemas import prompts as promptSchemas
 
 

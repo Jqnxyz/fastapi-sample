@@ -6,7 +6,7 @@ from ..api import openai as OpenAI
 
 from ..sql_app.crud import prompts as promptCrud
 from ..sql_app.schemas import prompts as promptSchemas
-from ..sql_app.models import prompts as promptModel
+from ..sql_app import models as promptModel
 from ..sql_app.database import SessionLocal, engine
 
 promptModel.Base.metadata.create_all(bind=engine)
@@ -17,7 +17,7 @@ router = APIRouter()
 @router.post("/prompt")
 def prompt(prompt: Prompt):
     response = OpenAI.gpt_prompt(prompt.query)
-    create_prompt(promptSchemas.PromptCreate(prompt=prompt.query))
+    db_obj = create_prompt(promptSchemas.PromptCreate(prompt=prompt.query))
     return response
 
 

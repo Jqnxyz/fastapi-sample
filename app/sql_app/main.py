@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from .crud import prompts as promptCrud
 from .schemas import prompts as promptSchemas
-from .models import prompts as promptModel
+from . import models as promptModel
 from .database import SessionLocal, engine
 
 promptModel.Base.metadata.create_all(bind=engine)
