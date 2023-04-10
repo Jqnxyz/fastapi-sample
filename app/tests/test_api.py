@@ -1,7 +1,10 @@
 from fastapi.testclient import TestClient
 from app.main import app
+from app.sql_app.models import Prompt
+from app.sql_app.database import SessionLocal
 import openai
 client = TestClient(app)
+db = SessionLocal()
 
 
 def test_post_prompt(monkeypatch):
@@ -23,6 +26,8 @@ def test_post_prompt(monkeypatch):
     query = "Respond to this with nothing else except the phrase \"The test is working.\""
     response = client.post(
         "/prompt", json={"query": query})
-    assert response.status_code == 200
+
+    assert response.status_code == 400
     assert response.json() == {"query": query,
                                "response": "The test is working."}
+    assert db.query(Prompt).first().prompt == query

@@ -17,7 +17,7 @@ router = APIRouter()
 @router.post("/prompt")
 def prompt(prompt: Prompt):
     response = OpenAI.gpt_prompt(prompt.query)
-    db_obj = create_prompt(promptSchemas.PromptCreate(prompt=prompt.query))
+    create_prompt(promptSchemas.PromptCreate(prompt=prompt.query))
     return response
 
 

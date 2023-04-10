@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from .routers import api
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(BASE_DIR, ".env"))
+load_dotenv()
 sys.path.append(BASE_DIR)
 
 app = FastAPI()
