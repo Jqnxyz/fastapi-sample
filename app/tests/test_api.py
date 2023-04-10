@@ -1,16 +1,24 @@
 from fastapi.testclient import TestClient
 from app.main import app
-from app.schemas.api import PromptResponse
+import openai
 client = TestClient(app)
 
 
-def test_post_prompt(mocker):
+def test_post_prompt(monkeypatch):
     # Mock OpenAI
-    expected_response = PromptResponse(
-        query="Respond to this with nothing else except the phrase \"The test is working.\"", response="The test is working.")
+    def mock_completion_create(*args, **kwargs):
+        return {
+            'choices': [{
+                'message': {
+                    'role': 'assistant',
+                    'content': 'The test is working.'},
+                'finish_reason': 'stop',
+                'index': 0
+            }]
+        }
 
-    mocker.patch("app.api.openai.gpt_prompt",
-                 return_value=expected_response)
+    monkeypatch.setattr(openai.ChatCompletion, "create",
+                        mock_completion_create)
 
     query = "Respond to this with nothing else except the phrase \"The test is working.\""
     response = client.post(

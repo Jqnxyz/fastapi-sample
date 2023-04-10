@@ -12,5 +12,5 @@ def list_models():
 def gpt_prompt(prompt):
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
-
-    return PromptResponse(query=prompt, response=completion.choices[0].message.content)
+    message = completion.get("choices")[0].get("message").get("content")
+    return PromptResponse(query=prompt, response=message)
