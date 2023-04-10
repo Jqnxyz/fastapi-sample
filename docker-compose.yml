@@ -17,6 +17,7 @@ services:
     build: .
     restart: always
     environment:
+      - OPENAI_API_KEY=KEY HERE
       - DATABASE_URL=postgresql+psycopg2://malcolmuser:malcolmpass@db:5432/malcolm_db
     ports:
       - "8000:8000"
