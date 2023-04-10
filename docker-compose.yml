@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: malcolmuser
+      POSTGRES_PASSWORD: malcolmpass
+      POSTGRES_DB: malcolm_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
+  app:
+    build: .
+    restart: always
+    environment:
+      - OPENAI_API_KEY=KEYHERE
+      - DATABASE_URL=postgresql+psycopg2://malcolmuser:malcolmpass@db:5435/malcolm_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  db-data:
