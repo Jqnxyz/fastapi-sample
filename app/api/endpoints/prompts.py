@@ -10,14 +10,6 @@ from app.schemas.responses import PromptResponse
 router = APIRouter()
 
 
-# @router.get("/prompt", response_model=PromptResponse)
-# async def read_prompt(
-#     current_user: User = Depends(deps.get_current_user),
-# ):
-#     """Get current user"""
-#     return current_user
-
-
 @router.post("/prompt", response_model=PromptResponse)
 async def create_prompt(
     prompt: PromptCreateRequest,
@@ -27,7 +19,6 @@ async def create_prompt(
 
     """Create new prompt"""
     prompt = Prompt(query=prompt.query, response=response.response)
-
     session.add(prompt)
     await session.commit()
     return prompt

@@ -39,7 +39,6 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
 
     # CORE SETTINGS
-    SECRET_KEY: str
     ENVIRONMENT: Literal["DEV", "PYTEST", "STG", "PRD"] = "DEV"
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
     ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1"]
