@@ -25,7 +25,7 @@ import tomllib
 from pathlib import Path
 from typing import Literal
 
-from pydantic import AnyHttpUrl, BaseSettings, EmailStr, PostgresDsn, validator
+from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
 with open(f"{PROJECT_DIR}/pyproject.toml", "rb") as f:

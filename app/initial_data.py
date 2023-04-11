@@ -7,13 +7,11 @@ By defualt `main` create a superuser if not exists
 
 import asyncio
 
-from app.core.session import async_session
-
 
 async def main() -> None:
     print("Start initial data")
-    async with async_session() as session:
-        print("Initial data created")
+    # async with async_session() as session:
+    #     print("Initial data created")
 
 
 if __name__ == "__main__":

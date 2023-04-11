@@ -1,13 +1,13 @@
 """add new table
 
 Revision ID: 2b2ccbe6a4a5
-Revises: 
+Revises:
 Create Date: 2023-04-10 19:49:22.164024
 
 """
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "2b2ccbe6a4a5"

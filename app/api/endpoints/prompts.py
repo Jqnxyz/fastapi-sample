@@ -1,13 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import delete, select
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
+from app.core import openai_api as OpenAI
 from app.models import Prompt
 from app.schemas.requests import PromptCreateRequest
 from app.schemas.responses import PromptResponse
-
-from app.core import openai_api as OpenAI
 
 router = APIRouter()
 
@@ -28,9 +26,7 @@ async def create_prompt(
     response = OpenAI.gpt_prompt(prompt.query)
 
     """Create new prompt"""
-    prompt = Prompt(
-        query=prompt.query,
-        response=response.response)
+    prompt = Prompt(query=prompt.query, response=response.response)
 
     session.add(prompt)
     await session.commit()
